@@ -3,6 +3,7 @@
 wxBEGIN_EVENT_TABLE( cMain, wxFrame )
 wxEND_EVENT_TABLE()
 
+
 cMain::cMain() : wxFrame( nullptr, wxID_ANY, "Minesweeper by Lorn0", wxPoint( 50, 50 ), wxSize( 796, 600 ), wxDEFAULT_FRAME_STYLE & ~( wxRESIZE_BORDER | wxMAXIMIZE_BOX ) )
 {
     //Maximize( true );
@@ -75,30 +76,19 @@ void cMain::OnButtonClicked( wxCommandEvent& evt )
    //Check if player hit a mine if yes -> game over (-1 indicades mine)
     if( nField[ y * nFieldWidth + x ] == -1 ) 
     {
-        wxMessageBox( "BOOOM !! - Game Over try again!" );
+        wxMessageBox( " BOOOM! - Game Over! " );
+        
+        wxMessageDialog dialog(
+            this,                                 // Parent window (kann auch nullptr sein)
+            "Do u want to Play again?",           // Nachricht
+            "Message",                            // Titel
+            wxYES_NO | wxICON_QUESTION            // Buttons und Icon
+        );
 
-       //reset gamestate
-        bFirstClick = true;
-        for( int i = 0; i < nFieldWidth; i++ )
-            for( int j = 0; j < nFieldHeight; j++ ) 
-            {
-                nField[ j * nFieldWidth + i ] = 0;
-                btn[ j * nFieldWidth + i ]->SetLabel( "" );
-                btn[ j * nFieldWidth + i ]->Enable( true );
-
-            }
-
-    }
-    else 
-    {
-       /* //if not -> win_count (we have 10x10 = 100 buttons and 30 mines so if we get 70 valid clicks without exploding we win // taek another look doesnt work
-        int win_count = 0;
-        win_count++;
-
-        if( win_count >= 70 ) 
-        {
-            //if wincount >= 70 -> game won
-            wxMessageBox( "Congrats u won! - tray again anyways!" );
+        // Dialog anzeigen und Antwort abfragen
+        if( dialog.ShowModal() == wxID_YES ) {
+            // Benutzer hat "Ja" geklickt
+            wxMessageBox( "O.K Have Fun!" );
 
             //reset gamestate
             bFirstClick = true;
@@ -110,7 +100,59 @@ void cMain::OnButtonClicked( wxCommandEvent& evt )
 
                 }
         }
-        */
+        else {
+            // Benutzer hat "Nein" geklickt
+            wxMessageBox( "O.K Have a great Day!" );
+            // Spiel beenden
+            this->Close( true );  // 'this' ist dein wxFrame oder wxDialog
+
+        }
+
+    }
+    else 
+    {
+        btn[ y * nFieldWidth + x ]->IsEnabled();
+       //if not -> win_count (we have 10x10 = 100 buttons and 30 mines so if we get 70 valid clicks without exploding we win // taek another look doesnt work
+        win_count++;
+        //wxMessageBox( wxString::Format( "%d", win_count ) );
+
+        if( win_count >= 70 ) 
+        {
+           //if wincount >= 70 -> game won
+            wxMessageBox( "Congratulations u Won!" );
+
+            wxMessageDialog dialog(
+                this,                                 // Parent window (kann auch nullptr sein)
+                "Do u want to Play again?",           // Nachricht
+                "Message",                            // Titel
+                wxYES_NO | wxICON_QUESTION            // Buttons und Icon
+            );
+
+            // Dialog anzeigen und Antwort abfragen
+            if( dialog.ShowModal() == wxID_YES ) {
+                // Benutzer hat "Ja" geklickt
+                wxMessageBox( "O.K Have Fun!" );
+
+                //reset gamestate
+                bFirstClick = true;
+                for( int i = 0; i < nFieldWidth; i++ )
+                    for( int j = 0; j < nFieldHeight; j++ ) {
+                        nField[ j * nFieldWidth + i ] = 0;
+                        btn[ j * nFieldWidth + i ]->SetLabel( "" );
+                        btn[ j * nFieldWidth + i ]->Enable( true );
+
+                    }
+            }
+            else {
+                // Benutzer hat "Nein" geklickt
+                wxMessageBox( "O.K Have a great Day!" );
+                // Spiel beenden
+                this->Close( true );  // 'this' ist dein wxFrame oder wxDialog
+
+            }
+
+        }
+        
 
        //count mines that are close to last location
         int mine_count = 0;
